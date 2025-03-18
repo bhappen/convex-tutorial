@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+
 import { faker } from "@faker-js/faker";
 // Import `useMutation` and `api` from Convex.
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../convex/_generated/api";
 
 // For demo purposes. In a real app, you'd have real user data.
 const NAME = getOrSetFakeName();
 
 export default function App() {
+  const { isAuthenticated } = useConvexAuth();
+  const { signIn, signOut } = useAuthActions();
   const messages = useQuery(api.chat.getMessages);
   const sendMessage = useMutation(api.chat.sendMessage);
 
@@ -19,6 +23,10 @@ export default function App() {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 0);
   }, [messages]);
+
+  useEffect(() => {
+    console.log("isAuthenticated", isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <main className="chat">
